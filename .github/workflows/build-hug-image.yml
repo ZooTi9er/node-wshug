@@ -35,13 +35,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # -------------------------------------------------------
+      # ✅ 新增步骤：把用户名转为全小写
+      # -------------------------------------------------------
+      - name: Lowercase the repo owner
+        run: echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
+          # ✅ 修改这里：使用上面生成的小写变量 env.REPO_OWNER
           tags: |
-            ghcr.io/${{ github.repository_owner }}/hugws:latest
+            ghcr.io/${{ env.REPO_OWNER }}/hugsite:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.description=http server
